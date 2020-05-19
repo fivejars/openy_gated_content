@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import VideoListing from '@/components/VideoListing.vue';
+import VideoListing from '@/components/VideoListing.vue'
 
 export default {
   name: 'Home',
   components: {
-    VideoListing,
-  },
+    VideoListing
+  }
 };
 </script>
