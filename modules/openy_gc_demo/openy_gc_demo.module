@@ -4,3 +4,7 @@
  * @file
  * The openy_gc_demo module routines.
  */
+
+function openy_gc_demo_theme() {
+  // Empty.
+}
