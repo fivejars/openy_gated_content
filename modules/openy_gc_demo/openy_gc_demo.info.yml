@@ -16,4 +16,6 @@ dependencies:
   - drupal:openy_gc_storage
   - drupal:openy_gc_auth_example
   - drupal:openy_gc_auth_custom
+  - drupal:openy_gc_auth_yusa
+  - drupal:openy_gc_auth_reclique
   - drupal:openy_demo_tcolor
