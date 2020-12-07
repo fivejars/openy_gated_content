@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class CategoriesController extends ControllerBase implements ContainerInjectionInterface {
 
+  const EDITOR_ROLE = 'virtual_ymca_editor';
+
   /**
    * The current active database's master connection.
    *
@@ -66,7 +68,7 @@ class CategoriesController extends ControllerBase implements ContainerInjectionI
     $query->condition('t.vid', 'gc_category');
     $query->condition('tf.status', 1);
 
-    if (!empty($y_roles)) {
+    if (!empty($y_roles) && !in_array(self::EDITOR_ROLE, $y_roles)) {
       $query->leftJoin('node_field_data', 'nd', 'n.entity_id = nd.nid');
       $or_group = $query->orConditionGroup();
       foreach ($y_roles as $role) {
