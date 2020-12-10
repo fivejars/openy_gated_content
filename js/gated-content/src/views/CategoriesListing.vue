@@ -1,11 +1,11 @@
 <template>
-  <div v-if="showlisting" class="gated-container">
+  <div v-if="loading" class="text-center">
+    <Spinner></Spinner>
+  </div>
+  <div v-else-if="error">Error loading</div>
+  <div v-else-if="showlisting" class="gated-container">
     <h2 class="title">{{ title }}</h2>
-    <div v-if="loading" class="text-center">
-      <Spinner></Spinner>
-    </div>
-    <div v-else-if="error">Error loading</div>
-    <div v-else class="video-listing category-listing">
+    <div class="video-listing category-listing">
       <CategoryTeaser
         v-for="category in listing"
         :key="category.id"
