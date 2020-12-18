@@ -16,7 +16,7 @@
     </div>
     <template v-else-if="listingIsNotEmpty">
       <div v-if="error">Error loading</div>
-      <div v-else class="four-columns">
+      <div v-else :class="layoutClass">
         <BlogTeaser
           v-for="blog in listing"
           :key="blog.id"
@@ -42,10 +42,11 @@ import Pagination from '@/components/Pagination.vue';
 import { JsonApiCombineMixin } from '@/mixins/JsonApiCombineMixin';
 import { SettingsMixin } from '@/mixins/SettingsMixin';
 import { FavoritesMixin } from '@/mixins/FavoritesMixin';
+import { ListingMixin } from '@/mixins/ListingMixin';
 
 export default {
   name: 'BlogListing',
-  mixins: [JsonApiCombineMixin, SettingsMixin, FavoritesMixin],
+  mixins: [JsonApiCombineMixin, SettingsMixin, FavoritesMixin, ListingMixin],
   components: {
     BlogTeaser,
     Spinner,
