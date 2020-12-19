@@ -40,12 +40,12 @@
 
 .one-columns .teaser  {
   .date, .time, .instructor {
-    width: 33%;
+    @include median(width, 33%, 100%, 100%);
   }
 }
 
 .two-columns .teaser {
   .date, .time {
-    width: 50%;
+    @include median(width, 50%, 100%, 100%);
   }
 }
