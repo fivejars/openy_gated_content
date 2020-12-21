@@ -16,7 +16,7 @@
     </div>
     <template v-else-if="listingIsNotEmpty">
       <div v-if="error">Error loading</div>
-      <div v-else :class="layoutClass">
+      <div v-else class="four-columns">
         <BlogTeaser
           v-for="blog in listing"
           :key="blog.id"
