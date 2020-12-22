@@ -21,8 +21,7 @@
               :id="video.attributes.drupal_internal__nid"
               :type="'node'"
               :bundle="'gc_video'"
-              icon-class="fill-white"
-              class="rounded-border border-thunder"
+              class="rounded-border border-thunder white"
             ></AddToFavorite>
             <div class="timer">
               {{ video_length }}

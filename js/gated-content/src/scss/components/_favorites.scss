@@ -1,41 +1,40 @@
 .add-to-favorite {
-  display:     inline-block;
-  cursor:      pointer;
-  line-height: 20px;
-  font-size:   20px;
+  display:             inline-block;
+
+  background-image:    url('assets/svg/favorites-solid.svg');
+  background-repeat:   no-repeat;
+  background-position: center;
+  background-size:     20px 20px;
+  cursor:              pointer;
+  width:               20px;
+  height:              20px;
 
   .spinner {
     width:  25px;
     height: 25px;
   }
 
-  &.active .favorite-icon {
-    fill: $red;
+  &.white {
+    background-image: url('assets/svg/favorites-solid-white.svg');
   }
 
-  .favorite-icon {
-    fill: $gray;
+  &.active {
+    background-image: url('assets/svg/favorites-solid-red.svg');
+  }
 
-    &:hover {
-      fill: $red;
-    }
+  &.loading {
+    background-image: none;
   }
 
   &.rounded-border {
-    position:      initial;
-    margin-right:  10px;
-    border:        2px solid $thunder;
-    border-radius: 50%;
-    padding:       15px 13px;
-    width:         50px;
-    height:        50px;
-    line-height:   10px;
-    font-size:     18px;
-
-    > svg {
-      width:  18px;
-      height: 18px;
-    }
+    position:        initial;
+    margin-right:    10px;
+    border:          2px solid $thunder;
+    border-radius:   50%;
+    background-size: 20px 21px;
+    padding:         11px 10px;
+    width:           50px;
+    height:          50px;
   }
 }
 
@@ -43,5 +42,18 @@
   .add-to-favorite {
     position:    initial;
     margin-left: 15px;
+
+    .spinner {
+      margin-top:  -10px;
+    }
+  }
+}
+
+@media (hover), (min-width: 0 \0
+), (min--moz-device-pixel-ratio: 0) {
+  .add-to-favorite:not(.loading) {
+    &:hover {
+      background-image: url('assets/svg/favorites-solid-red.svg');
+    }
   }
 }

@@ -1,40 +1,25 @@
 <template>
   <div
-    :class="{ active: isActive }"
+    :class="{ active: isActive, loading: loading }"
     class="add-to-favorite"
     @click="onClick"
   >
     <Spinner v-if="loading"></Spinner>
-    <SvgIcon v-else
-      title="Add to favorite"
-      class="favorite-icon"
-      :icon="icon"
-      :class="iconClass"
-    ></SvgIcon>
   </div>
 </template>
 
 <script>
 import Spinner from '@/components/Spinner.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
 
 export default {
   name: 'AddToFavorite',
   components: {
-    SvgIcon,
     Spinner,
   },
   props: {
     id: {
       type: Number,
       required: true,
-    },
-    icon: {
-      type: String,
-      default: 'favorites-solid',
-    },
-    iconClass: {
-      type: String,
     },
     type: {
       type: String,
@@ -51,6 +36,7 @@ export default {
       shareModal: {
         visible: false,
       },
+      hover: false,
     };
   },
   computed: {
