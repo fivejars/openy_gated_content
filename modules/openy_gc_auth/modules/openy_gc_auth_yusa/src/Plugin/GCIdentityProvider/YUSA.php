@@ -109,7 +109,7 @@ class YUSA extends GCIdentityProviderPluginBase {
       '#description' => $this->t('This is usually 4 digits.'),
       '#default_value' => $config['association_number'],
       '#required' => TRUE,
-      '#maxlength'=> 4,
+      '#maxlength' => 4,
     ];
 
     $form['verification_url'] = [
