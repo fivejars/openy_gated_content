@@ -21,7 +21,7 @@ export default {
   computed: {
     emptyMsg() {
       return this.config.live_stream_empty_text === ''
-      ? 'Events not found.' : this.config.live_stream_empty_text;
+        ? 'Events not found.' : this.config.live_stream_empty_text;
     },
   },
 };

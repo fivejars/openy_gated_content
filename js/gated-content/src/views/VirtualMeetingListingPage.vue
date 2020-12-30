@@ -22,7 +22,7 @@ export default {
   computed: {
     emptyMsg() {
       return this.config.virtual_meeting_empty_text === ''
-      ? 'Events not found.' : this.config.virtual_meeting_empty_text;
+        ? 'Events not found.' : this.config.virtual_meeting_empty_text;
     },
   },
 };
