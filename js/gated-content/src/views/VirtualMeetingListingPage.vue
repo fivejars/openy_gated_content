@@ -4,7 +4,7 @@
       :title="config.components.virtual_meeting.title"
       :eventType="'virtual_meeting'"
       :withDateFilter="true"
-      :msg="'No Virtual Meetings scheduled for this date.'"
+      :msg="emptyMsg"
     />
   </div>
 </template>
@@ -18,6 +18,12 @@ export default {
   mixins: [SettingsMixin],
   components: {
     EventListing,
+  },
+  computed: {
+    emptyMsg() {
+      return this.config.virtual_meeting_empty_text === ''
+      ? 'Events not found.' : this.config.virtual_meeting_empty_text;
+    },
   },
 };
 </script>

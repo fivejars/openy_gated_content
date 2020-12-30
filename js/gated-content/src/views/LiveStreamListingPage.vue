@@ -3,7 +3,7 @@
     <EventListing
       :title="config.components.live_stream.title"
       :withDateFilter="true"
-      :msg="'No Live streams scheduled for this date.'"
+      :msg="emptyMsg"
     />
   </div>
 </template>
@@ -17,6 +17,12 @@ export default {
   mixins: [SettingsMixin],
   components: {
     EventListing,
+  },
+  computed: {
+    emptyMsg() {
+      return this.config.live_stream_empty_text === ''
+      ? 'Events not found.' : this.config.live_stream_empty_text;
+    },
   },
 };
 </script>
