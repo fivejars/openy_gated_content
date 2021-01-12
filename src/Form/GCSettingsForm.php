@@ -151,20 +151,6 @@ class GCSettingsForm extends ConfigFormBase {
       '#placeholder' => '/path/to/page',
     ];
 
-    $form['app_settings']['live_stream_empty_text'] = [
-      '#type' => 'textfield',
-      '#title' => 'Display text when no livestream is scheduled',
-      '#default_value' => $config->get('live_stream_empty_text'),
-      '#required' => TRUE,
-    ];
-
-    $form['app_settings']['virtual_meeting_empty_text'] = [
-      '#type' => 'textfield',
-      '#title' => 'Display text when no event is scheduled',
-      '#default_value' => $config->get('virtual_meeting_empty_text'),
-      '#required' => TRUE,
-    ];
-
     $form['app_settings']['top_menu'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Top menu settings'),
