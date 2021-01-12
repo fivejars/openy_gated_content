@@ -12,6 +12,7 @@
 <script>
 import EventListing from '@/components/event/EventListing.vue';
 import { SettingsMixin } from '@/mixins/SettingsMixin';
+
 export default {
   name: 'VirtualMeetingListingPage',
   mixins: [SettingsMixin],
