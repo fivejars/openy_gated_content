@@ -24,9 +24,7 @@
         />
       </div>
     </template>
-    <div v-else class="empty-listing">
-      Videos not found.
-    </div>
+    <div v-else class="empty-listing">{{ msg }}</div>
     <Pagination
       v-if="pagination"
       :links="links"
@@ -60,7 +58,10 @@ export default {
       type: String,
       default: '',
     },
-    msg: String,
+    msg: {
+      type: String,
+      default: config.components.gc_video.empty_block_text,
+    },
     category: {
       type: String,
       default: '',

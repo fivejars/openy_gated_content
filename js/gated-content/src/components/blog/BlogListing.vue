@@ -24,9 +24,7 @@
         />
       </div>
     </template>
-    <div v-else class="empty-listing">
-      Blog posts not found.
-    </div>
+    <div v-else class="empty-listing">{{ msg }}</div>
     <Pagination
       v-if="pagination"
       :links="links"
@@ -60,7 +58,10 @@ export default {
       type: String,
       default: '',
     },
-    msg: String,
+    msg: {
+      type: String,
+      default: config.components.vy_blog_post.empty_block_text,
+    },
     viewAll: {
       type: Boolean,
       default: false,
