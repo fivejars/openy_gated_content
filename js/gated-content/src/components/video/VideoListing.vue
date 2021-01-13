@@ -60,7 +60,7 @@ export default {
     },
     msg: {
       type: String,
-      default: config.components.gc_video.empty_block_text,
+      default: this.config.components.gc_video.empty_block_text,
     },
     category: {
       type: String,

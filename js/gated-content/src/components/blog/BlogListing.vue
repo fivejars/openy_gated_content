@@ -60,7 +60,7 @@ export default {
     },
     msg: {
       type: String,
-      default: config.components.vy_blog_post.empty_block_text,
+      default: this.config.components.vy_blog_post.empty_block_text,
     },
     viewAll: {
       type: Boolean,
