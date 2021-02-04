@@ -3,6 +3,7 @@
 namespace Drupal\openy_gc_log;
 
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileSystem;
@@ -266,7 +267,7 @@ class LogArchiver {
       $entity_id = $log->get('entity_id')->value;
       $export_row = [
         'created' => date('m/d/Y - H:i:s', $log->get('created')->value),
-        'user' => $log->get('uid')->target_id ? $log->get('uid')->entity->getEmail() : '',
+        'user' => ($log->get('uid')->target_id && !is_null($log->get('uid')->entity)) ? $log->get('uid')->entity->getEmail() : '',
         'event_type' => $event_type,
         'entity_type' => $entity_type,
         'entity_bundle' => $entity_bundle,
@@ -284,6 +285,9 @@ class LogArchiver {
         $entity_type_id = $entity_type === 'node' ? 'node' : 'eventinstance';
         $entity = $this->entityTypeManager->getStorage($entity_type_id)
           ->load($entity_id);
+        if (!$entity instanceof EntityInterface) {
+          continue;
+        }
         $export_row['entity_title'] = $entity_type === 'node' ?
           $entity->label() :
           ($entity->get('field_ls_title')->value ? $entity->get('field_ls_title')->value : $entity->get('title')->value);
