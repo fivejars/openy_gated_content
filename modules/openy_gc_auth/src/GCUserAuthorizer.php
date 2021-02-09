@@ -86,7 +86,7 @@ class GCUserAuthorizer {
     }
 
     $account = NULL;
-    // Load drupal user by name and email from SalesForce.
+    // Load drupal user by name and email from Service provider.
     $account_by_mail = user_load_by_mail($mail);
     $account_by_name = user_load_by_name($name);
 
@@ -122,11 +122,13 @@ class GCUserAuthorizer {
         $account->set($changed_field, $$changed_field);
         $account->save();
 
-        $this->logger->error('Service provider user credentials was changed. For User with id:%id changed field \'%field\' from \'%old\' to \'%new\' value',
+        $this->logger->notice('Service provider user credentials was changed. For User with id:%id changed field \'%field\' from \'%old\' to \'%new\' value',
           [
             '%id' => $account->id(),
             '%field' => $changed_field,
             '%old' => $old_changed_field_value,
+            // Get field dynamically (name or mail) depend of what
+            // field was changed.
             '%new' => $$changed_field,
           ]
         );
