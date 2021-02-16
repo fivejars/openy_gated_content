@@ -126,12 +126,23 @@ class PersonifyAuthController extends ControllerBase {
 
       $decrypted_token = $this->personifySSO->decryptCustomerToken($query['ct']);
       if ($token = $this->personifySSO->validateCustomerToken($decrypted_token)) {
-        $userInfo = $this->personifySSO->getCustomerInfo($token);
-        $errorMessage = NULL;
-        user_cookie_save([
-          'personify_authorized' => $token,
-          'personify_time' => REQUEST_TIME,
-        ]);
+        if ($this->userHasActiveMembership($token)) {
+          $userInfo = $this->personifySSO->getCustomerInfo($token);
+          $errorMessage = NULL;
+          user_cookie_save([
+            'personify_authorized' => $token,
+            'personify_time' => REQUEST_TIME,
+          ]);		
+        } else {
+          user_cookie_delete('personify_authorized');
+          user_cookie_delete('personify_time');
+
+          $path = URL::fromUserInput(
+            $this->configFactory->get('openy_gated_content.settings')->get('virtual_y_login_url'),
+            ['query' => ['personify-error' => '1']]
+          )->toString();
+          return new RedirectResponse($path);
+        }
       }
     }
 
@@ -187,7 +198,7 @@ class PersonifyAuthController extends ControllerBase {
       )->toString();
       return new RedirectResponse($path);
     }
-
+    
     // {"UserExists":true|false,"UserName":"","Email":"","DisableAccountFlag":false|true}.
     $userInfo = $this->personifySSO->getCustomerInfo($token);
 
@@ -247,7 +258,6 @@ class PersonifyAuthController extends ControllerBase {
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   private function userHasActiveMembership($token) {
-
     $personifyID = $this->personifySSO->getCustomerIdentifier($token);
     if (empty($personifyID)) {
       return FALSE;
@@ -286,16 +296,15 @@ class PersonifyAuthController extends ControllerBase {
 
     $data = $this->personifyClient->doAPIcall('POST', 'GetStoredProcedureDataJSON?$format=json', $body, 'xml');
 
-    $isActive = FALSE;
-
     if ($data) {
       $results = json_decode($data['Data'], TRUE);
+
       if (isset($results['Table'][0]['Access']) && (strtolower($results['Table'][0]['Access']) === 'approved')) {
-        $isActive = TRUE;
+        return TRUE;
       }
     }
-
-    return $isActive;
+    
+    return FALSE;
   }
 
   /**
@@ -327,6 +336,7 @@ class PersonifyAuthController extends ControllerBase {
 
     $env = $this->configFactory->get('personify.settings')->get('environment');
     $configLoginUrl = $this->configFactory->get('openy_gc_auth_personify.settings')->get($env . '_url_login');
+
     if (empty($configLoginUrl)) {
       $this->messenger->addWarning('Please, check Personify configs in settings.php.');
       return NULL;
@@ -338,5 +348,4 @@ class PersonifyAuthController extends ControllerBase {
 
     exit();
   }
-
 }
