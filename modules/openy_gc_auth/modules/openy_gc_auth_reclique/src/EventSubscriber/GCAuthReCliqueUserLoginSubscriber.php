@@ -65,7 +65,6 @@ class GCAuthReCliqueUserLoginSubscriber implements EventSubscriberInterface {
               $account->removeRole($account_role);
             }
           }
-          $user_membership = $event->extraData['member']['PackageName'];
           $user_memberships = $event->extraData['Memberships'];
           $active_roles = [];
           $permissions_mapping = explode(';', $permissions_mapping);
