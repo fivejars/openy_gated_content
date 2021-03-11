@@ -75,7 +75,7 @@ class GCAuthReCliqueUserLoginSubscriber implements EventSubscriberInterface {
               $active_roles[] = $role[1];
             }
           }
-          if (empty($active_roles)) {
+          if ($user_membership && empty($active_roles)) {
             $active_roles = ['virtual_y'];
           }
           foreach ($active_roles as $role) {
