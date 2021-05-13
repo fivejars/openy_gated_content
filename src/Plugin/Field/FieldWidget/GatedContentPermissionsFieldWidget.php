@@ -107,7 +107,7 @@ class GatedContentPermissionsFieldWidget extends WidgetBase implements Container
       '#default_value' => !empty($values) ? explode(',', $values) : NULL,
     ];
 
-    return $element;
+    return ['value' => $element];
   }
 
   /**
