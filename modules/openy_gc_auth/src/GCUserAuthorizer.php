@@ -73,11 +73,12 @@ class GCUserAuthorizer {
         $account->save();
       }
     }
-    // Redirecting user login page.
+    // List of roles to redirect user login page.
     $userRolesArray = [
       'administrator',
-      'virtual_ymca_editor'
+      'virtual_ymca_editor',
     ];
+    // Redirecting user login page.
     foreach ($userRolesArray as $role) {
       if ($account->hasRole($role)) {
         $response = new RedirectResponse('/user/login', 301);
