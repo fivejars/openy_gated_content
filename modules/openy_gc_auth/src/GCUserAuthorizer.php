@@ -72,6 +72,14 @@ class GCUserAuthorizer {
         $account->save();
       }
     }
+    // Redirecting user login page.
+    $userRolesArray = ['administrator', 'site_owner'];
+    foreach ($userRolesArray as $key => $role) {
+      if($account->hasRole($role)) {
+        $response = new RedirectResponse('/user/login', 301);
+        $response->send();
+      }
+    }
     // Instantiate GC login user event.
     $event = new GCUserLoginEvent($account, $extra_data);
     // Dispatch the event.
