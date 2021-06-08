@@ -89,7 +89,6 @@ class GCUserAuthorizer {
     $event = new GCUserLoginEvent($account, $extra_data);
     // Dispatch the event.
     $this->eventDispatcher->dispatch(GCUserLoginEvent::EVENT_NAME, $event);
-
     user_login_finalize($account);
 
   }
