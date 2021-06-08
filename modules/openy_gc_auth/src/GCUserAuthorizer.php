@@ -5,6 +5,7 @@ namespace Drupal\openy_gc_auth;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * User Authorizer class.
@@ -73,9 +74,13 @@ class GCUserAuthorizer {
       }
     }
     // Redirecting user login page.
-    $userRolesArray = ['administrator', 'site_owner'];
-    foreach ($userRolesArray as $key => $role) {
-      if($account->hasRole($role)) {
+    $userRolesArray = [
+      'administrator',
+      'site_owner',
+      'virtual_ymca_editor'
+    ];
+    foreach ($userRolesArray as $role) {
+      if ($account->hasRole($role)) {
         $response = new RedirectResponse('/user/login', 301);
         $response->send();
       }
