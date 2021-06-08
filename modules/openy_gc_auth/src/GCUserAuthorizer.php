@@ -76,7 +76,6 @@ class GCUserAuthorizer {
     // Redirecting user login page.
     $userRolesArray = [
       'administrator',
-      'site_owner',
       'virtual_ymca_editor'
     ];
     foreach ($userRolesArray as $role) {
