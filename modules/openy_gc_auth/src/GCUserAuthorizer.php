@@ -4,11 +4,10 @@ namespace Drupal\openy_gc_auth;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Url;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
+use Drupal\Core\Url;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * User Authorizer class.
