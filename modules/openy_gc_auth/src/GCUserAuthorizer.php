@@ -6,6 +6,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Url;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * User Authorizer class.
@@ -29,6 +31,13 @@ class GCUserAuthorizer {
   protected $eventDispatcher;
 
   /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * GCUserAuthorizer constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -36,9 +45,10 @@ class GCUserAuthorizer {
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
     $this->userStorage = $entityTypeManager->getStorage('user');
     $this->eventDispatcher = $event_dispatcher;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -81,8 +91,9 @@ class GCUserAuthorizer {
     // Redirecting user login page.
     foreach ($userRolesArray as $role) {
       if ($account->hasRole($role)) {
-        $response = new RedirectResponse('/user/login', 301);
-        $response->send();
+        $loginUrl = Url::fromRoute('user.login')->toString();
+        $this->messenger->addMessage(t('You have to login as real user, since you are an administrator.'));
+        return new RedirectResponse($loginUrl, 302);
       }
     }
     // Instantiate GC login user event.
