@@ -6,12 +6,11 @@
       :videoId="videoId"
       :options="{responsive: 'true', url: media.field_media_video_embed_field}"
       :player-vars="handleAttributes()"
-      :autoplay="autoplay"
-      @loaded="handleLoaded()"
-      @ready="handleReady()"
+      @loaded="setTimeCode()"
       @play="handlePlay()"
       @pause="handlePause()"
       @ended="handleEnded()"
+      @ready="playerReadied($event)"
     />
   </div>
 </template>
@@ -112,6 +111,30 @@ export default {
     handleEnded() {
       this.playbackInProgress = false;
       this.handlePlayerEvent('videoPlaybackEnded');
+    },
+    playerReadied(player) {
+      const timecode = this.media.field_media_video_embed_field.substring(
+        this.media.field_media_video_embed_field.lastIndexOf('#t=') + 3,
+        this.media.field_media_video_embed_field.lastIndexOf('s'),
+      );
+      if (!Number.isNaN(timecode)) {
+        const timecodeInSeconds = parseInt(timecode, 10);
+        player.seekTo(timecodeInSeconds, true);
+        this.$refs.player.player.pauseVideo();
+      }
+    },
+    setTimeCode() {
+      if (this.player === 'vimeo') {
+        const timecode = this.media.field_media_video_embed_field.substring(
+          this.media.field_media_video_embed_field.lastIndexOf('#t=') + 3,
+          this.media.field_media_video_embed_field.lastIndexOf('s'),
+        );
+        if (!Number.isNaN(timecode)) {
+          const timecodeInSeconds = parseInt(timecode, 10);
+          this.$refs.player.player.setCurrentTime(timecodeInSeconds);
+        }
+      }
+      this.$refs.player.pause();
     },
   },
   mounted() {
