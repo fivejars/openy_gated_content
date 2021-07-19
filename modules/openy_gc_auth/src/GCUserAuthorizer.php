@@ -3,8 +3,11 @@
 namespace Drupal\openy_gc_auth;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Url;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * User Authorizer class.
@@ -28,16 +31,26 @@ class GCUserAuthorizer {
   protected $eventDispatcher;
 
   /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * GCUserAuthorizer constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity Type Manager.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
     $this->userStorage = $entityTypeManager->getStorage('user');
     $this->eventDispatcher = $event_dispatcher;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -72,11 +85,23 @@ class GCUserAuthorizer {
         $account->save();
       }
     }
+    // List of roles to redirect user login page.
+    $userRolesArray = [
+      'administrator',
+      'virtual_ymca_editor',
+    ];
+    // Redirecting user login page.
+    foreach ($userRolesArray as $role) {
+      if ($account->hasRole($role)) {
+        $loginUrl = Url::fromRoute('user.login')->toString();
+        $this->messenger->addMessage($this->t('You have to login as real user, since you are an administrator.'));
+        return new RedirectResponse($loginUrl, 302);
+      }
+    }
     // Instantiate GC login user event.
     $event = new GCUserLoginEvent($account, $extra_data);
     // Dispatch the event.
     $this->eventDispatcher->dispatch(GCUserLoginEvent::EVENT_NAME, $event);
-
     user_login_finalize($account);
 
   }
