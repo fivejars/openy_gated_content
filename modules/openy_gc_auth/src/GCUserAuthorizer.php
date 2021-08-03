@@ -94,7 +94,7 @@ class GCUserAuthorizer {
     foreach ($userRolesArray as $role) {
       if ($account->hasRole($role)) {
         $loginUrl = Url::fromRoute('user.login')->toString();
-        $this->messenger->addMessage($this->t('You have to login as real user, since you are an administrator.'));
+        $this->messenger->addMessage($this->t('Please retry your login on this form.'));
         return new RedirectResponse($loginUrl, 302);
       }
     }
