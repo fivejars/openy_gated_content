@@ -8,11 +8,15 @@ use Drupal\Core\Url;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Link;
 
 /**
  * User Authorizer class.
  */
 class GCUserAuthorizer {
+
+  use StringTranslationTrait;
 
   const VIRTUAL_Y_DEFAULT_ROLE = 'virtual_y';
 
@@ -93,9 +97,13 @@ class GCUserAuthorizer {
     // Redirecting user login page.
     foreach ($userRolesArray as $role) {
       if ($account->hasRole($role)) {
-        $loginUrl = Url::fromRoute('user.login')->toString();
-        $this->messenger->addMessage($this->t('Please retry your login on this form.'));
-        return new RedirectResponse($loginUrl, 302);
+        $link = Link::createFromRoute($this->t('Login'),
+              'user.login',
+            )->toString();
+        $this->messenger->addStatus($this->t('Please retry your login from this link. @link', [
+          '@link' => $link,
+        ]));
+        return;
       }
     }
     // Instantiate GC login user event.
