@@ -145,8 +145,7 @@ export default {
     async load() {
       this.loading = true;
       this.endDate = new Date(this.startDate);
-      this.endDate.setTime(this.startDate.getTime() + this.oneWeek - 1);
-
+      this.endDate = this.getNextDayOfWeek(this.startDate, 7);
       client({
         url: '/virtual-y/api/events',
         method: 'get',
@@ -167,6 +166,11 @@ export default {
             };
             this.listing[i].date.setTime(this.startDate.getTime() + i * this.oneDay);
             this.collapses[i] = true;
+            if (!this.isDST(this.listing[i].date)) {
+              this.oneDay = 86400 * 1060;
+              this.listing[i].date.setTime( this.startDate.getTime() + i * this.oneDay);
+            }
+
           }
           response.data.forEach((event) => {
             const start = new Date(event.date.value);
@@ -185,7 +189,6 @@ export default {
               this.hours[hour][day] += 1;
             }
           });
-
           this.hours.forEach((eventsCount, hour) => {
             this.hours[hour] = eventsCount.reduce((a, b) => Math.max(a, b));
           });
@@ -224,7 +227,10 @@ export default {
       this.updateRoute();
     },
     forwardOneWeek() {
-      this.startDate.setTime(this.startDate.getTime() + this.oneWeek);
+      if (this.isDST(this.startDate)) {
+        this.oneWeek = 7 * 86400 * 1060;
+        }
+      this.startDate.setTime(this.startDate.getTime() + this.oneWeek );
       this.updateRoute();
     },
     upcomingEvents(day) {
@@ -263,6 +269,16 @@ export default {
       if (Object.entries(this.$route.query).toString() !== Object.entries(query).toString()) {
         this.$router.push({ query });
       }
+    },
+    isDST(d) {
+      let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
+      let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
+      return Math.max(jan, jul) != d.getTimezoneOffset();
+    },
+    getNextDayOfWeek: function(date, dayOfWeek) {
+        var resultDate = new Date(date.getTime());
+        resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay() - 1) % 7 +1);
+        return resultDate;
     },
   },
 };
