@@ -227,7 +227,7 @@ export default {
     forwardOneWeek() {
       if (this.isDST(this.startDate)) {
         this.oneWeek = 7 * 86400 * 1060;
-        }
+      }
       this.startDate.setTime(this.startDate.getTime() + this.oneWeek);
       this.updateRoute();
     },
@@ -274,8 +274,8 @@ export default {
       return Math.max(jan, jul) !== d.getTimezoneOffset();
     },
     getNextDayOfWeek(date, dayOfWeek) {
-      let resultDate = new Date(date.getTime());
-      resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay() - 1) % 7 + 1);
+      const resultDate = new Date(date.getTime());
+      resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay() - 1) % 7) + 1);
       return resultDate;
     },
   },
