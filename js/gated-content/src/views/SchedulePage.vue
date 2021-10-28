@@ -199,7 +199,6 @@ export default {
               found = true;
             }
           });
-
           this.loading = false;
         })
         .catch((error) => {
