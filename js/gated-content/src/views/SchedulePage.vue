@@ -168,9 +168,8 @@ export default {
             this.collapses[i] = true;
             if (!this.isDST(this.listing[i].date)) {
               this.oneDay = 86400 * 1060;
-              this.listing[i].date.setTime( this.startDate.getTime() + i * this.oneDay);
+              this.listing[i].date.setTime(this.startDate.getTime() + i * this.oneDay);
             }
-
           }
           response.data.forEach((event) => {
             const start = new Date(event.date.value);
@@ -230,7 +229,7 @@ export default {
       if (this.isDST(this.startDate)) {
         this.oneWeek = 7 * 86400 * 1060;
         }
-      this.startDate.setTime(this.startDate.getTime() + this.oneWeek );
+      this.startDate.setTime(this.startDate.getTime() + this.oneWeek);
       this.updateRoute();
     },
     upcomingEvents(day) {
@@ -271,14 +270,14 @@ export default {
       }
     },
     isDST(d) {
-      let jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
-      let jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
-      return Math.max(jan, jul) != d.getTimezoneOffset();
+      const jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
+      const jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
+      return Math.max(jan, jul) !== d.getTimezoneOffset();
     },
-    getNextDayOfWeek: function(date, dayOfWeek) {
-        var resultDate = new Date(date.getTime());
-        resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay() - 1) % 7 +1);
-        return resultDate;
+    getNextDayOfWeek(date, dayOfWeek) {
+      let resultDate = new Date(date.getTime());
+      resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay() - 1) % 7 + 1);
+      return resultDate;
     },
   },
 };
