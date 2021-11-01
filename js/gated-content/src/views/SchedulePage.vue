@@ -145,7 +145,7 @@ export default {
     async load() {
       this.loading = true;
       this.endDate = new Date(this.startDate);
-      this.endDate = this.getNextDayOfWeek(this.startDate, 7);
+      this.endDate = this.getNextDayOfWeek(this.startDate, 6);
       client({
         url: '/virtual-y/api/events',
         method: 'get',
