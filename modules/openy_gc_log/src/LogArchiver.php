@@ -7,6 +7,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannel;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -92,9 +93,9 @@ class LogArchiver {
   private $config;
 
   /**
-   * FileSystem.
+   * FileSystemInterface.
    *
-   * @var \Drupal\Core\File\FileSystem
+   * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
 
@@ -135,8 +136,8 @@ class LogArchiver {
    *   LoggerChannel.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   ConfigFactory.
-   * @param \Drupal\Core\File\FileSystem $fileSystem
-   *   FileSystem.
+   * @param \Drupal\Core\File\FileSystemInterface $fileSystem
+   *   FileSystemInterface.
    * @param \Drupal\Core\Site\Settings $settings
    *   Settings.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -150,7 +151,7 @@ class LogArchiver {
     EntityTypeManager $entityTypeManager,
     LoggerChannel $logger,
     ConfigFactory $configFactory,
-    FileSystem $fileSystem,
+    FileSystemInterface $fileSystem,
     Settings $settings,
     ModuleHandlerInterface $module_handler,
     DateFormatterInterface $date_formatter,
@@ -423,7 +424,7 @@ class LogArchiver {
             $metadata = unserialize($log->get('event_metadata')->value, ['allowed_classes' => FALSE]);
           }
           foreach ([
-            'entity_title' => $this->t('Content title'),
+            'entity_title' => 'Content title',
             'entity_instructor_name' => 'Instructor name',
             'entity_created' => 'Content creation date',
           ] as $key => $export_col) {

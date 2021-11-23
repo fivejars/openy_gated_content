@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Password\PasswordGeneratorInterface;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -38,6 +39,14 @@ class GCUserAuthorizer {
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
+  
+  /**
+   * The service for generating passwords.
+   *
+   * @var \Drupal\Core\Password\PasswordGeneratorInterface
+   */
+  protected $passwordGenerator;
+
 
   /**
    * GCUserAuthorizer constructor.
@@ -48,27 +57,35 @@ class GCUserAuthorizer {
    *   Event dispatcher.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
+   * @param \Drupal\Core\Password\PasswordGeneratorInterface $password_generator
+   *   Service for generating passwords.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger, PasswordGeneratorInterface $password_generator) {
     $this->userStorage = $entityTypeManager->getStorage('user');
     $this->eventDispatcher = $event_dispatcher;
     $this->messenger = $messenger;
+    $this->passwordGenerator = $password_generator;
   }
 
   /**
    * {@inheritdoc}
    */
   public function authorizeUser($name, $email, array $extra_data = []) {
-
     if (empty($name) || empty($email)) {
       return;
     }
 
-    // Create drupal user if it doesn't exist and login it.
+    // Try to find the user by an email, if not -- then re-search by name.
     $account = user_load_by_mail($email);
+    if (!$account && ($account = user_load_by_name($name))) {
+      $account->setEmail($email);
+      $account->save();
+    }
+
+    // Create drupal user if it doesn't exist and login it.
     if (!$account) {
       $user = $this->userStorage->create();
-      $user->setPassword(user_password());
+      $user->setPassword($this->passwordGenerator->generate());
       $user->enforceIsNew();
       $user->setEmail($email);
       $user->setUsername($name);
@@ -83,7 +100,7 @@ class GCUserAuthorizer {
       // Activate user if it's not.
       if (!$account->isActive()) {
         $account->activate();
-        $account->setPassword(user_password());
+        $account->setPassword($this->passwordGenerator->generate());
         $account->save();
       }
     }
@@ -107,9 +124,9 @@ class GCUserAuthorizer {
     // Instantiate GC login user event.
     $event = new GCUserLoginEvent($account, $extra_data);
     // Dispatch the event.
-    $this->eventDispatcher->dispatch(GCUserLoginEvent::EVENT_NAME, $event);
-    user_login_finalize($account);
+    $this->eventDispatcher->dispatch($event, GCUserLoginEvent::EVENT_NAME);
 
+    user_login_finalize($account);
   }
 
   /**
@@ -124,7 +141,7 @@ class GCUserAuthorizer {
 
     if (!$account) {
       $user = $this->userStorage->create();
-      $user->setPassword(user_password());
+      $user->setPassword($this->passwordGenerator->generate());
       $user->enforceIsNew();
       $user->setEmail($email);
       $user->setUsername($name);
