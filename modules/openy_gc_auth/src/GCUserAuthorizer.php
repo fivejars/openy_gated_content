@@ -3,6 +3,9 @@
 namespace Drupal\openy_gc_auth;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Password\PasswordGeneratorInterface;
 use Drupal\openy_gc_auth\Event\GCUserLoginEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -11,6 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * User Authorizer class.
  */
 class GCUserAuthorizer {
+
+  use StringTranslationTrait;
 
   const VIRTUAL_Y_DEFAULT_ROLE = 'virtual_y';
 
@@ -29,11 +34,19 @@ class GCUserAuthorizer {
   protected $eventDispatcher;
 
   /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+  
+  /**
    * The service for generating passwords.
    *
    * @var \Drupal\Core\Password\PasswordGeneratorInterface
    */
   protected $passwordGenerator;
+
 
   /**
    * GCUserAuthorizer constructor.
@@ -42,12 +55,15 @@ class GCUserAuthorizer {
    *   Entity Type Manager.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    * @param \Drupal\Core\Password\PasswordGeneratorInterface $password_generator
    *   Service for generating passwords.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, PasswordGeneratorInterface $password_generator) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger, PasswordGeneratorInterface $password_generator) {
     $this->userStorage = $entityTypeManager->getStorage('user');
     $this->eventDispatcher = $event_dispatcher;
+    $this->messenger = $messenger;
     $this->passwordGenerator = $password_generator;
   }
 
@@ -86,6 +102,23 @@ class GCUserAuthorizer {
         $account->activate();
         $account->setPassword($this->passwordGenerator->generate());
         $account->save();
+      }
+    }
+    // List of roles to redirect user login page.
+    $userRolesArray = [
+      'administrator',
+      'virtual_ymca_editor',
+    ];
+    // Redirecting user login page.
+    foreach ($userRolesArray as $role) {
+      if ($account->hasRole($role)) {
+        $link = Link::createFromRoute($this->t('Login'),
+              'user.login',
+            )->toString();
+        $this->messenger->addStatus($this->t('Please retry your login from this link. @link', [
+          '@link' => $link,
+        ]));
+        return;
       }
     }
     // Instantiate GC login user event.
